@@ -20,8 +20,8 @@
   require(0);
 })({
   <% data.forEach((item) => { %>
-    "<%- item["id"] %>": [function(require, module, exports) {
+    <%- item["id"] %>: [function(require, module, exports) {
       <%- item["code"] %>
-    }, <%- JSON.stringify(item["mapping"]) %>]
+    }, <%- JSON.stringify(item["mapping"]) %>],
   <% }); %>
 })

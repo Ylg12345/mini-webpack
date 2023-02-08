@@ -18,7 +18,8 @@
     "@babel/traverse": "^7.20.13",
     "@types/node": "^18.11.19",
     "babel-core": "^6.26.3",
-    "babel-preset-env": "^1.7.0"
+    "babel-preset-env": "^1.7.0",
+    "tapable": "^2.2.1"
   },
   "dependencies": {
     "ejs": "^3.1.8"

@@ -4,21 +4,68 @@ import * as parser from '@babel/parser';
 import traverse from '@babel/traverse';
 import ejs from 'ejs';
 import { transformFromAst } from 'babel-core';
+import jsonLoader from './loader/json-loader.js'; 
+import ChangeOutputPathPlugin from './plugins/change-output-path-plugin.js';
+import { SyncHook } from 'tapable';
 
 let id = 0;
 
+const webpackOptions = {
+  module: {
+    rules: [
+      {
+        test: /\.json$/,
+        use: [
+          jsonLoader
+        ]
+      },
+    ],
+  },
+  plugins: [
+    new ChangeOutputPathPlugin({
+      outpath: './dist/index.js'
+    })
+  ]
+}
+
+const hooks = {
+  emitFile: new SyncHook(['context']), 
+};
+
 function createAsset(filePath) {
-  // 1. 获取文件内容
+  // 获取文件内容
   // ast -> 抽象语法树 
 
-  const source = fs.readFileSync(filePath, {
-    encoding: "utf-8",
+  let source = fs.readFileSync(filePath, {
+    encoding: 'utf-8',
   });
 
-  // 2. 获取依赖关系
+  // init loader
+
+  const loaderContext = {
+    addDeps(dep) {
+      console.log('addDeps', dep);
+    },
+  }
+
+  const loaders = webpackOptions.module.rules;
+
+  loaders.forEach(({ test, use }) => {
+    if(test.test(filePath)) {
+      if(Array.isArray(use)) {
+        use.reverse().forEach((fn) => {
+          source = fn.call(loaderContext, source)
+        })
+      } else {
+        source = use.call(loaderContext, source);
+      }
+    }
+  })
+
+  // 获取依赖关系
 
   const ast = parser.parse(source, {
-    sourceType: "module"
+    sourceType: 'module'
   });
 
   const deps = [];
@@ -42,6 +89,17 @@ function createAsset(filePath) {
   };
 }
 
+// init plugins
+
+function initPlugins() {
+  const plugins = webpackOptions.plugins;
+  plugins.forEach((plugin) => {
+    plugin.apply(hooks);
+  })
+}
+
+initPlugins();
+
 function createGraph() {
   const mainAsset = createAsset(path.resolve('./src', './main.js'));
   const queue = [mainAsset];
@@ -58,13 +116,12 @@ function createGraph() {
 }
 
 function build(graph) {
-  const template = fs.readFileSync("./bundle.ejs", { 
-    encoding: "utf-8"
+  const template = fs.readFileSync('./bundle.ejs', { 
+    encoding: 'utf-8'
   })
 
   const data = graph.map((asset) => {
     const { id, code, mapping } = asset;
-
     return {
       id,
       code,
@@ -72,10 +129,19 @@ function build(graph) {
     }
   });
 
+  let outputPath = './dist/bundle.js';
+
+  hooks.emitFile.call({
+    changeOutputPath(path) {
+      outputPath = path;
+    },
+  });
+
   const code = ejs.render(template, { data });
-  fs.writeFileSync("./dist/bundle.js", code);
+  fs.writeFileSync(outputPath, code);
 }
 
 const graph = createGraph();
 
 build(graph);
+
