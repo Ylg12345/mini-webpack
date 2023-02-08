@@ -103,9 +103,13 @@ initPlugins();
 function createGraph() {
   const mainAsset = createAsset(path.resolve('./src', './main.js'));
   const queue = [mainAsset];
+  // console.log('mainPath', path.resolve('./src', './main.js'));
+  // console.log('mainPathDirname', path.dirname(path.resolve('./src', './main.js')));
 
   for(const asset of queue) {
     asset.deps.forEach((relativePath) => {
+
+      // console.log(path.resolve(path.dirname(path.resolve('./src', './main.js')), relativePath));
       const assetChild = createAsset(path.resolve('./src', relativePath));
       asset.mapping[relativePath] = assetChild.id;
       queue.push(assetChild);
