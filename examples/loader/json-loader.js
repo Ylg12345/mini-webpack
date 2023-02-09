@@ -1,4 +1,4 @@
-export default function(source) {
+export function jsonLoader(source) {
 
   this.addDeps("jsonLoader");
 
