@@ -10,7 +10,7 @@ export default class HtmlWebpackPlugin {
   constructor(options) {
     const { filename, title } = options || {};
     this._filename = filename || 'index.html';
-    this._title = title;
+    this._title = title || '';
   }
 
   apply(compiler) {

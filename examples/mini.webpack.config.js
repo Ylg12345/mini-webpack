@@ -24,7 +24,7 @@ const webpackConfig = {
   plugins: [
     new HtmlWebpackPlugin({
       filename: 'template.html',
-      title: 'mini-webpack-ylg'
+      // title: 'mini-webpack-ylg'
     }),
   ]
 };

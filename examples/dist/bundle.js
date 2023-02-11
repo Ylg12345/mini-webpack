@@ -23,29 +23,13 @@
     0: [function(require, module, exports) {
       "use strict";
 
-var _user = require("../public/user.json");
-
-var _user2 = _interopRequireDefault(_user);
-
 var _foo = require("./foo.js");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 (0, _foo.foo)();
 console.log('main.js');
-console.log(JSON.parse(_user2.default).name);
-    }, {"../public/user.json":1,"./foo.js":2}],
+    }, {"./foo.js":1}],
   
     1: [function(require, module, exports) {
-      "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = "{\r\n  \"name\": \"ylg\",\r\n  \"age\": \"180\"\r\n}";
-    }, {}],
-  
-    2: [function(require, module, exports) {
       "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -59,9 +43,9 @@ function foo() {
   console.log('foo');
   (0, _bar.bar)();
 }
-    }, {"./bar.js":3}],
+    }, {"./bar.js":2}],
   
-    3: [function(require, module, exports) {
+    2: [function(require, module, exports) {
       "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -69,9 +53,25 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.bar = bar;
 
+var _user = require("../public/user.json");
+
+var _user2 = _interopRequireDefault(_user);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function bar() {
   console.log('bar');
+  console.log(JSON.parse(_user2.default).name);
 }
+    }, {"../public/user.json":3}],
+  
+    3: [function(require, module, exports) {
+      "use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = "{\r\n  \"name\": \"ylg\",\r\n  \"age\": \"180\"\r\n}";
     }, {}],
   
 })
